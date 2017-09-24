@@ -1,17 +1,45 @@
-<template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <hello></hello>
-  </div>
+<template lang="pug">
+  #app
+    vual(
+      :open="vualOpen"
+      size="large"
+      @close="vualOpen = false"
+      :buttons="vualButtons"
+    )
+      div yo
+    vual(:open="vual2Open"
+      @close="vual2Open = false"
+      modalBody="Show me what you got"
+      disable-overlay-click)
+    button(@click="vualOpen = true") Open dialog
+
 </template>
 
 <script>
-import Hello from './components/Hello'
+import Vual from './components/Vual'
 
 export default {
   name: 'app',
   components: {
-    Hello
+    Vual
+  },
+  data () {
+    return {
+      vualOpen: false,
+      vual2Open: false,
+      vualButtons: [
+        {
+          attrs: { },
+          label: 'Ok',
+          click: (e) => (this.vual2Open = true)
+        },
+        {
+          label: 'Close',
+          close: true,
+          click: () => (this.vual2Open = true)
+        }
+      ]
+    }
   }
 }
 </script>

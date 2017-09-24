@@ -1,0 +1,88 @@
+
+$modal-padding: 5px;
+$modal-overlay-bg: rgba(0,0,0,0.3);
+$modal-dialog-bg: rgba(255,255,255,1);
+
+@mixin modal-container() {
+  padding: $modal-padding;
+}
+
+.body.modal-overlay {
+  overflow: hidden;
+}
+
+.modal {
+  text-align: left;
+  position: fixed;
+  background: $modal-overlay-bg;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  visibility: hidden;
+  align-items: center;
+  justify-content: center;
+  overflow-y: scroll;
+
+  .modal-dialog {
+    min-width: 70%;
+  }
+
+  &--rtl {
+    text-align: right;
+  }
+
+  &--open {
+    display: flex;
+    visibility: visible;
+  }
+
+  &--small {
+    .modal-dialog {
+      min-width: 50%;
+    }
+  }
+  &--large {
+    .modal-dialog {
+      min-width: 90%;
+    }
+  }
+  &--full {
+    .modal-dialog {
+      min-width: 100%;
+      height: 100%
+    }
+  }
+
+  .modal-dialog {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: $modal-dialog-bg;
+
+    &__close-btn {
+      -webkit-appearance: button;
+      position: absolute;
+      background: transparent;
+      border: none;
+      margin: 0;
+      top: 0;
+      right: 0;
+      padding: 5px 7px;
+    }
+
+    &__header {
+      @include modal-container();
+    }
+
+    &__body {
+      @include modal-container();
+      flex-grow: 1;
+    }
+
+    &__footer {
+      @include modal-container();
+    }
+  }
+}
