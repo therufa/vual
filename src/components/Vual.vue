@@ -47,6 +47,7 @@ export default {
     rtl: Boolean,
     disableCloseButton: Boolean,
     disableOverlayClick: Boolean,
+    disableEscKey: Boolean,
     buttons: Array,
     modalTitle: String,
     modalBody: String
@@ -76,16 +77,20 @@ export default {
       }
 
       return modifiers
+    },
+    focusableElements () {
+      return Array.from(this.$el.querySelectorAll('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]')) || []
     }
   },
   methods: {
     getModifier (modifier) {
       return 'modal--' + modifier
     },
-    emitClose (meta) {
+    emitClose (meta = null) {
       this.$emit('close', meta)
     },
-    emitOpen (meta) {
+    emitOpen (meta = null) {
+      this.setFocusOnDialog()
       this.$emit('open', meta)
     },
     bindClickListener (button, $event) {
@@ -113,30 +118,45 @@ export default {
         this.emitClose(evt)
       }
     },
-    registerTabloop (elements) {
-      elements = Array.from(elements)
+    bindFocusableListener (e, element, first, last) {
+      if (e.keyCode !== 9) return
+
+      let nextTarget = null
+
+      if (e.currentTarget === last && !e.shiftKey) {
+        nextTarget = first
+      } else if (e.currentTarget === first && e.shiftKey) {
+        nextTarget = last
+      }
+
+      if (nextTarget !== null) {
+        nextTarget.focus()
+        e.preventDefault()
+      }
+    },
+    registerTabloop () {
+      const elements = this.focusableElements
 
       elements.forEach(element => element.addEventListener('keydown', e => {
-        if (e.keyCode !== 9) return
-
-        let nextTarget = null
-
-        if (e.currentTarget === elements.slice(-1)[0] && !e.shiftKey) {
-          nextTarget = elements[0]
-        } else if (e.currentTarget === elements[0] && e.shiftKey) {
-          nextTarget = elements[elements.length - 1]
-        }
-
-        if (nextTarget !== null) {
-          nextTarget.focus()
-          e.preventDefault()
-        }
+        this.bindFocusableListener(e, element, elements[0], elements.slice(-1)[0])
       }))
+    },
+    escHandler (e) {
+      if (e.keyCode !== 27 || this.disableEscKey === true) return
+
+      this.emitClose()
+    },
+    setFocusOnDialog () {
+      return this.getFocuxableElements()
     }
   },
   mounted () {
-    const elements = this.$el.querySelectorAll('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]')
-    this.$on('open', this.registerTabloop(elements))
+    this.registerTabloop()
+
+    document.addEventListener('keydown', this.escHandler)
+  },
+  destroyed () {
+    document.removeEventListener('keydown', this.escHandler)
   }
 }
 </script>

@@ -1,16 +1,18 @@
 <template lang="pug">
   #app
-    vual(
-      :open="vualOpen"
+    vual(v-if="vualOpen"
+      open
       size="large"
       @close="vualOpen = false"
       :buttons="vualButtons"
     )
       div yo
-    vual(:open="vual2Open"
+    vual(v-if="vual2Open"
+      open
       @close="vual2Open = false"
       modalBody="Show me what you got"
-      disable-overlay-click)
+      disable-overlay-click
+      disable-esc-key)
     button(@click="vualOpen = true") Open dialog
 
 </template>
