@@ -90,7 +90,6 @@ export default {
       this.$emit('close', meta)
     },
     emitOpen (meta = null) {
-      this.setFocusOnDialog()
       this.$emit('open', meta)
     },
     bindClickListener (button, $event) {
@@ -145,9 +144,6 @@ export default {
       if (e.keyCode !== 27 || this.disableEscKey === true) return
 
       this.emitClose()
-    },
-    setFocusOnDialog () {
-      return this.getFocuxableElements()
     }
   },
   mounted () {
